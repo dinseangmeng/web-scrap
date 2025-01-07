@@ -1,0 +1,26 @@
+{
+  "name": "alphadev-webscrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js",
+    "start:dev": "nodemon ./src/index.js"
+  },
+  "keywords": [],
+  "author": "DINN SEANGMENG",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "basic-auth": "^2.0.1",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "puppeteer": "^23.11.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
