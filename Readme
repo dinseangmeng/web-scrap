@@ -16,7 +16,7 @@ Web scraping API service with authentication and Swagger documentation.
 
 1. Clone and install:
 ```bash
-git clone [repository-url]
+git clone [https://github.com/dinseangmeng/web-scrap.git]
 npm install
 ```
 
