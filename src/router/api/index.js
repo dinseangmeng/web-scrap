@@ -80,19 +80,21 @@ router.post("/scrap", async (req, res) => {
     ];
 
     browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: "/usr/bin/chromium", // Use the system Chromium
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--disable-crash-reporter",
-        "--no-first-run",
-        "--single-process",
-      ],
-    });
-
+    headless: 'new',
+    executablePath: '/usr/bin/chromium',
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-crash-reporter',
+        '--no-first-run',
+        '--single-process',
+        '--disable-crashpad',
+        '--no-crash-upload',
+        '--disable-breakpad'
+    ]
+});
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(timeout);
     await page.goto(decodedUrl, { waitUntil: "networkidle0" });
