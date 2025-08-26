@@ -1,6 +1,6 @@
-const express = require('express')
+const express = require("express");
 const router = express.Router();
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 
 /**
  * @swagger
@@ -53,62 +53,77 @@ const puppeteer = require('puppeteer');
  *                 error:
  *                   type: string
  */
-router.post('/scrap', async (req, res) => {
-    let browser = null;
-    try {
-        const decodedUrl = req.body.url;
-        const timeout = req.body.timeout || 30000;
-        const content_tag = req.body.content_tag || [
-            'html', 'body', 'head', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'p', 'span', 'li', 'ul', 'ol', 'a', 'img', 'table'
-        ];
+router.post("/scrap", async (req, res) => {
+  let browser = null;
+  try {
+    const decodedUrl = req.body.url;
+    const timeout = req.body.timeout || 30000;
+    const content_tag = req.body.content_tag || [
+      "html",
+      "body",
+      "head",
+      "div",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "p",
+      "span",
+      "li",
+      "ul",
+      "ol",
+      "a",
+      "img",
+      "table",
+    ];
 
-         browser = await puppeteer.launch({
-            headless: 'new',
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
-                '--no-zygote',
-                '--single-process',
-                '--disable-gpu'
-            ]
-        });
+    browser = await puppeteer.launch({
+      headless: "new",
+      executablePath: "/usr/bin/chromium", // Use the system Chromium
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-crash-reporter",
+        "--no-first-run",
+        "--single-process",
+      ],
+    });
 
-        const page = await browser.newPage();
-        await page.setDefaultNavigationTimeout(timeout);
-        await page.goto(decodedUrl, { waitUntil: 'networkidle0' });
+    const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(timeout);
+    await page.goto(decodedUrl, { waitUntil: "networkidle0" });
 
-        const content = await page.evaluate((tags) => {
-            const results = {};
-            
-            tags.forEach(tag => {
-                const elements = document.getElementsByTagName(tag);
-                results[tag] = Array.from(elements).map(el => ({
-                    text: el.innerText,
-                    // html: el.innerHTML,
-                    // attributes: Array.from(el.attributes).reduce((attrs, attr) => {
-                    //     attrs[attr.name] = attr.value;
-                    //     return attrs;
-                    // }, {})
-                }));
-            });
-            
-            return results;
-        }, content_tag);
+    const content = await page.evaluate((tags) => {
+      const results = {};
 
-        res.json({
-            data: content
-        });
+      tags.forEach((tag) => {
+        const elements = document.getElementsByTagName(tag);
+        results[tag] = Array.from(elements).map((el) => ({
+          text: el.innerText,
+          // html: el.innerHTML,
+          // attributes: Array.from(el.attributes).reduce((attrs, attr) => {
+          //     attrs[attr.name] = attr.value;
+          //     return attrs;
+          // }, {})
+        }));
+      });
 
-    } catch (error) {
-        console.error('Scraping error:', error);
-        res.status(500).json({ error: error.message });
-    } finally {
-        if (browser) await browser.close();
-    }
+      return results;
+    }, content_tag);
+
+    res.json({
+      data: content,
+    });
+  } catch (error) {
+    console.error("Scraping error:", error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    if (browser) await browser.close();
+  }
 });
 
 module.exports = router;
